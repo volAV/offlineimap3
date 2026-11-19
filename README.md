@@ -210,3 +210,20 @@ $ make html  # Requires rst2html
 $ make man   # Requires a2x (http://asciidoc.org)
 $ make api   # Requires sphinx
 ```
+
+## UIDVALIDITY safety
+
+This fork stops a folder sync immediately when an existing local or remote
+UIDVALIDITY differs from the saved value. No messages are copied or uploaded, and
+the synchronization status is not saved for that folder. Other folders can still
+be processed, but the run reports the validity failure.
+
+Do not overwrite the saved UIDVALIDITY for a nonempty mailbox. Back up the
+affected Maildir and its state, download a fresh copy using a read-only remote
+repository, and reconcile local-only messages and tags before switching state.
+
+The isolated regression checks require no server or credentials:
+
+```sh
+python -B -m unittest test.tests.test_03_uidvalidity -v
+```

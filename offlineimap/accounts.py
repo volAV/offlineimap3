@@ -1,4 +1,5 @@
 # Copyright (C) 2003-2016 John Goerzen & contributors
+# Modified 2026-11-19: stop folder synchronization on UIDVALIDITY mismatch.
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -522,15 +523,16 @@ def syncfolder(account, remotefolder, quick):
             if not localfolder.check_uidvalidity():
                 ui.validityproblem(localfolder)
                 localfolder.repository.restore_atime()
-                return
+                return False
             if not remotefolder.check_uidvalidity():
                 ui.validityproblem(remotefolder)
                 localrepos.restore_atime()
-                return
+                return False
         else:
             # Both folders empty, just save new UIDVALIDITY.
             localfolder.save_uidvalidity()
             remotefolder.save_uidvalidity()
+        return True
 
     def cachemessagelists_upto_date(date):
         """Returns messages with uid > min(uids of messages newer than date)."""
@@ -645,15 +647,18 @@ def syncfolder(account, remotefolder, quick):
                     "with maxage or startdate; ignoring -q.")
         if maxage is not None:
             cachemessagelists_upto_date(maxage)
-            check_uid_validity()
+            if not check_uid_validity():
+                return
         elif localstart is not None:
             cachemessagelists_startdate(remotefolder, localfolder,
                                         localstart)
-            check_uid_validity()
+            if not check_uid_validity():
+                return
         elif remotestart is not None:
             cachemessagelists_startdate(localfolder, remotefolder,
                                         remotestart)
-            check_uid_validity()
+            if not check_uid_validity():
+                return
         else:
             localfolder.cachemessagelist()
             if quick:
@@ -684,7 +689,8 @@ def syncfolder(account, remotefolder, quick):
                     ui.skippingfolder(remotefolder)
                     localrepos.restore_atime()
                     return
-            check_uid_validity()
+            if not check_uid_validity():
+                return
             remotefolder.cachemessagelist()
 
         # Synchronize remote changes.

@@ -1,3 +1,4 @@
+# Modified 2026-11-19: use only the backend required by the project metadata.
 [project]
 dependencies = [
     "distro",
@@ -40,10 +41,7 @@ issues = "https://github.com/OfflineIMAP/offlineimap3/issues"
 repository = "https://github.com/OfflineIMAP/offlineimap3/"
 
 [build-system]
-requires = [
-    "setuptools>=18.5",
-    "wheel"
-]
+requires = ["setuptools>=77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project.optional-dependencies]

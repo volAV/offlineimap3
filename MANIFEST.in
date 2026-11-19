@@ -1,5 +1,5 @@
+# Modified 2026-11-19: update the source distribution manifest.
 global-exclude .gitignore .git *.bak *.orig *.rej
-include setup.py
 include COPYING
 include Changelog*
 include MAINTAINERS
